@@ -1,0 +1,254 @@
+
+<style>
+  :root {
+    --blue-50: #E6F1FB;
+    --blue-100: #B5D4F4;
+    --blue-200: #85B7EB;
+    --blue-400: #378ADD;
+    --blue-600: #185FA5;
+    --blue-800: #0C447C;
+    --blue-900: #042C53;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans, system-ui); }
+  #quiz-wrap { padding: 1rem 0; }
+  #header { background: var(--blue-600); border-radius: var(--border-radius-lg, 12px); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  #header h2 { color: #fff; font-size: 18px; font-weight: 500; margin-bottom: 4px; }
+  #header p { color: var(--blue-100); font-size: 13px; }
+  #progress-bar-wrap { background: var(--blue-800); border-radius: 8px; height: 6px; margin-top: 10px; }
+  #progress-bar { background: var(--blue-100); border-radius: 8px; height: 6px; transition: width 0.3s; }
+  #meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  #q-counter { font-size: 13px; color: var(--color-text-secondary); }
+  #score-badge { background: var(--blue-50); color: var(--blue-800); font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 20px; border: 0.5px solid var(--blue-200); }
+  #category-badge { background: var(--blue-100); color: var(--blue-800); font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; display: inline-block; }
+  #question-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg, 12px); padding: 1.5rem; margin-bottom: 1rem; }
+  #question-text { font-size: 16px; font-weight: 500; color: var(--color-text-primary); line-height: 1.6; margin-bottom: 1.25rem; }
+  .opt-btn { display: block; width: 100%; text-align: left; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md, 8px); padding: 0.75rem 1rem; margin-bottom: 8px; font-size: 15px; color: var(--color-text-primary); cursor: pointer; transition: background 0.15s, border-color 0.15s; line-height: 1.5; }
+  .opt-btn:hover:not(:disabled) { background: var(--blue-50); border-color: var(--blue-400); }
+  .opt-btn.correct { background: #EAF3DE; border-color: #639922; color: #27500A; }
+  .opt-btn.wrong { background: #FCEBEB; border-color: #E24B4A; color: #501313; }
+  .opt-btn:disabled { cursor: default; }
+  #feedback-box { border-radius: var(--border-radius-md, 8px); padding: 0.75rem 1rem; margin-bottom: 1rem; font-size: 14px; display: none; line-height: 1.6; }
+  #feedback-box.correct-fb { background: #EAF3DE; color: #27500A; border: 0.5px solid #639922; }
+  #feedback-box.wrong-fb { background: var(--blue-50); color: var(--blue-800); border: 0.5px solid var(--blue-200); }
+  #next-btn { background: var(--blue-600); color: #fff; border: none; border-radius: var(--border-radius-md, 8px); padding: 0.7rem 1.5rem; font-size: 15px; cursor: pointer; display: none; }
+  #next-btn:hover { background: var(--blue-800); }
+  #result-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg, 12px); padding: 2rem; text-align: center; display: none; }
+  #result-card h3 { font-size: 22px; font-weight: 500; color: var(--blue-800); margin-bottom: 8px; }
+  #result-card p { color: var(--color-text-secondary); font-size: 15px; margin-bottom: 1.5rem; }
+  #score-big { font-size: 48px; font-weight: 500; color: var(--blue-600); margin: 1rem 0; }
+  #score-pct { font-size: 16px; color: var(--color-text-secondary); }
+  #restart-btn { background: var(--blue-600); color: #fff; border: none; border-radius: var(--border-radius-md, 8px); padding: 0.7rem 1.5rem; font-size: 15px; cursor: pointer; margin-top: 1rem; }
+  #restart-btn:hover { background: var(--blue-800); }
+  .grade-bar { display: flex; gap: 4px; justify-content: center; margin: 1rem 0; flex-wrap: wrap; }
+  .grade-dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-correct { background: #639922; }
+  .dot-wrong { background: #E24B4A; }
+  .dot-unset { background: var(--color-border-tertiary); }
+  #breakdown { text-align: left; background: var(--blue-50); border-radius: var(--border-radius-md,8px); padding: 1rem; margin-top: 1rem; }
+  #breakdown h4 { font-size: 14px; font-weight: 500; color: var(--blue-800); margin-bottom: 8px; }
+  .bk-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--color-text-secondary); padding: 3px 0; border-bottom: 0.5px solid var(--blue-100); }
+  .bk-row:last-child { border-bottom: none; }
+</style>
+<div id="quiz-wrap">
+  <div id="header">
+    <h2>แบบทดสอบ Units 5–7 + Cover Letter + Reading</h2>
+    <p>70 ข้อ — เลือกคำตอบที่ถูกต้อง</p>
+    <div id="progress-bar-wrap"><div id="progress-bar" style="width:0%"></div></div>
+  </div>
+  <div id="meta">
+    <span id="q-counter">ข้อที่ 1 / 70</span>
+    <span id="score-badge">คะแนน: 0</span>
+  </div>
+  <div id="question-card">
+    <div id="category-badge"></div>
+    <div id="question-text"></div>
+    <div id="options"></div>
+    <div id="feedback-box"></div>
+    <button id="next-btn" onclick="nextQuestion()">ถัดไป →</button>
+  </div>
+  <div id="result-card">
+    <h3>ผลคะแนนสุดท้าย</h3>
+    <div id="score-big"></div>
+    <div id="score-pct"></div>
+    <div class="grade-bar" id="grade-dots"></div>
+    <p id="result-msg"></p>
+    <div id="breakdown"></div>
+    <button id="restart-btn" onclick="restartQuiz()">ทำแบบทดสอบอีกครั้ง</button>
+  </div>
+</div>
+<script>
+const questions = [
+  {cat:"Unit 5 – Vocabulary",q:"ข้อใดแปลว่า 'ทำงานอัตโนมัติ'?",opts:["automated","customise","disrupt","interact"],ans:0,exp:"automated = ทำงานอัตโนมัติ"},
+  {cat:"Unit 5 – Vocabulary",q:"คำว่า 'disrupt' หมายความว่าอย่างไร?",opts:["ปรับแต่งตามความต้องการ","ทำให้เปลี่ยนแปลงอย่างฉับพลัน","ปฏิสัมพันธ์","ปัดหน้าจอ"],ans:1,exp:"disrupt = ทำให้เปลี่ยนแปลงอย่างฉับพลัน"},
+  {cat:"Unit 5 – Vocabulary",q:"'Swipe' ในบริบทของสมาร์ตโฟนหมายถึงอะไร?",opts:["กดปุ่ม","ปัดหน้าจอ","พิมพ์ข้อความ","ซูมภาพ"],ans:1,exp:"swipe = ปัด (หน้าจอ)"},
+  {cat:"Unit 5 – Vocabulary",q:"ข้อใดหมายถึง 'นวัตกรรม'?",opts:["choice","innovation","interact","customise"],ans:1,exp:"innovation = นวัตกรรม"},
+  {cat:"Unit 5 – Adjectives",q:"คำคุณศัพท์ใดแปลว่า 'ใช้งานง่าย'?",opts:["stylish","advanced","user-friendly","dependable"],ans:2,exp:"user-friendly = ใช้งานง่าย"},
+  {cat:"Unit 5 – Adjectives",q:"'top-of-the-range' หมายความว่าอะไร?",opts:["ราคาถูกที่สุด","ระดับกลาง","ระดับสูงสุด","ใช้งานง่าย"],ans:2,exp:"top-of-the-range = ระดับสูงสุด"},
+  {cat:"Unit 5 – Adjectives",q:"Noun ของ 'stylish' คือคำใด?",opts:["style","stylism","stylist","styling"],ans:0,exp:"style → stylish (adjective form)"},
+  {cat:"Unit 5 – Adjectives",q:"'dependable' มาจาก noun ใด?",opts:["depend","dependence","dependent","depender"],ans:0,exp:"depend → dependable"},
+  {cat:"Unit 5 – Adjectives",q:"เลือกคำที่ถูกต้อง: 'This phone uses the most ___ technology.' ",opts:["advance","advanced","advancing","advancement"],ans:1,exp:"advanced = adjective form ของ advance"},
+  {cat:"Unit 5 – Adjectives",q:"ข้อใดเป็น adjective ที่ถูกต้องสำหรับ 'good + design'?",opts:["good-designed","well-design","well-designed","goodly-designed"],ans:2,exp:"well-designed = ออกแบบมาดี"},
+  {cat:"Unit 5 – Exercise 1",q:"Exercise 1: 'Today, customers are always looking for something different. This is probably because in today's ___ world...' เลือกคำที่ถูก",opts:["disrupted","automated","interacted","customised"],ans:0,exp:"disrupted = ถูกรบกวน/เปลี่ยนแปลง (automated = ทำงานอัตโนมัติ ไม่เข้าบริบท)"},
+  {cat:"Unit 5 – Exercise 1",q:"'...full of ___, everyone seems to follow the same trends...' เลือกคำที่ถูก",opts:["interaction","innovation","automation","customisation"],ans:1,exp:"innovation = นวัตกรรม เหมาะกับบริบทนี้"},
+  {cat:"Unit 5 – Exercise 1",q:"'...there is far more ___ than ever before.' เลือกคำที่ถูก",opts:["custom","choice","swipe","disrupt"],ans:1,exp:"choice = ทางเลือก"},
+  {cat:"Unit 5 – Grammar",q:"Present Perfect Simple with 'just' ใช้โครงสร้างใด?",opts:["Subject + just + V3","Subject + have/has + just + V3","Subject + just + V1","Subject + did + just + V3"],ans:1,exp:"โครงสร้าง: Subject + have/has + just + V3"},
+  {cat:"Unit 5 – Grammar",q:"'yet' ในประโยคปฏิเสธวางไว้ที่ไหน?",opts:["ต้นประโยค","หลัง Subject","ท้ายประโยค","หน้า V3"],ans:2,exp:"yet วางท้ายประโยคในประโยคปฏิเสธและคำถาม"},
+  {cat:"Unit 5 – Grammar",q:"ประโยคใดถูกต้องสำหรับ 'already'?",opts:["She already has finished.","She has finished already.","She has already finished.","She already finished has."],ans:2,exp:"She has already finished. (have/has + already + V3)"},
+  {cat:"Unit 5 – Grammar",q:"แปลงเป็นประโยค: 'they / not export / to USA (yet)'",opts:["They didn't exported to USA yet.","They haven't exported to the USA yet.","They not have exported to USA yet.","They has not exported to USA yet."],ans:1,exp:"They haven't exported to the USA yet."},
+  {cat:"Unit 5 – Grammar",q:"'We have already built three factories this year.' ประโยคนี้ใช้ tense ใด?",opts:["Past Simple","Present Simple","Present Perfect Simple","Past Perfect"],ans:2,exp:"Present Perfect Simple: have + already + V3 (built)"},
+  {cat:"Unit 5 – Grammar",q:"แปลงเป็นคำถาม: 'you / finish / the designs / (yet)'",opts:["Have you finished the designs yet?","Did you finish the designs yet?","Do you finish the designs yet?","Are you finishing the designs yet?"],ans:0,exp:"Have you finished the designs for the new product line yet?"},
+  {cat:"Unit 5 – Grammar",q:"'The boss has just sent me an email.' 'just' แสดงถึงอะไร?",opts:["เกิดขึ้นนานแล้ว","เพิ่งเกิดขึ้น","ยังไม่เกิดขึ้น","เกิดขึ้นเร็วกว่าที่คาด"],ans:1,exp:"just = เพิ่งเกิดขึ้นไม่นาน"},
+  {cat:"Unit 5 – Order of Adjectives",q:"ลำดับ adjectives ก่อน noun ที่ถูกต้องคือข้อใด?",opts:["Size→Opinion→Age→Colour","Opinion→Size→Age→Shape→Colour→Origin→Material","Colour→Size→Opinion→Age","Age→Size→Colour→Opinion"],ans:1,exp:"Opinion→Size→Age→Shape→Colour→Origin→Material→Purpose+Noun"},
+  {cat:"Unit 5 – Order of Adjectives",q:"ประโยคใดมีลำดับ adjective ถูกต้อง?",opts:["a new small well-designed Japanese electric car","a well-designed small new Japanese electric car","a Japanese small new well-designed electric car","a electric Japanese new small well-designed car"],ans:1,exp:"Opinion(well-designed)→Size(small)→Age(new)→Origin(Japanese)→Purpose(electric)"},
+  {cat:"Unit 6 – Vocabulary",q:"'ear defenders' หมายถึงอะไร?",opts:["ถุงมือกันบาด","ที่ครอบหูกันเสียง","แว่นตานิรภัย","หมวกนิรภัย"],ans:1,exp:"ear defenders = ที่ครอบหูกันเสียง"},
+  {cat:"Unit 6 – Vocabulary",q:"อุปกรณ์ชนิดใดปกป้องดวงตาในโรงงาน?",opts:["hard hat","high-visibility clothing","goggles","steel toe-cap boots"],ans:2,exp:"goggles = แว่นตานิรภัย"},
+  {cat:"Unit 6 – Vocabulary",q:"'high-visibility clothing' ใช้ทำอะไร?",opts:["ป้องกันเสียงดัง","สะท้อนแสงให้มองเห็นได้ชัด","ป้องกันหัว","ป้องกันมือ"],ans:1,exp:"high-visibility clothing = เสื้อสะท้อนแสง"},
+  {cat:"Unit 6 – Vocabulary",q:"'steel toe-cap boots' ป้องกันส่วนใดของร่างกาย?",opts:["มือ","หัว","เท้า","หู"],ans:2,exp:"steel toe-cap boots = บูตหัวเหล็ก ป้องกันนิ้วและเท้า"},
+  {cat:"Unit 6 – Vocabulary",q:"กริยา 'pose (a risk)' หมายความว่าอะไร?",opts:["บันทึก","ก่อให้เกิดความเสี่ยง","ติดตั้ง","จัดหาให้"],ans:1,exp:"pose (a risk) = ก่อให้เกิดความเสี่ยง"},
+  {cat:"Unit 6 – Vocabulary",q:"'hold (training)' หมายความว่าอะไร?",opts:["ถือของ","จัดการฝึกอบรม","บันทึก","จัดหาให้"],ans:1,exp:"hold = จัดการฝึกอบรม"},
+  {cat:"Unit 6 – Exercise 1",q:"'Companies must evaluate anything which could ___ a risk of injury.' เติมคำที่ถูก",opts:["issue","pose","record","fit"],ans:1,exp:"pose a risk = ก่อให้เกิดความเสี่ยง"},
+  {cat:"Unit 6 – Exercise 1",q:"'...they must ___ staff with protective clothing...' เติมคำที่ถูก",opts:["fit","hold","issue","record"],ans:2,exp:"issue staff with = จัดหาให้พนักงาน"},
+  {cat:"Unit 6 – Exercise 1",q:"'...the company must ___ side guards to all dangerous equipment.' เติมคำ",opts:["handle","fit","record","hold"],ans:1,exp:"fit side guards = ติดตั้งแผ่นกั้นด้านข้าง"},
+  {cat:"Unit 6 – Grammar",q:"Modal verb ใดแสดง obligation (บังคับ) ที่แข็งแกร่งที่สุด?",opts:["should","might","must","could"],ans:2,exp:"must = บังคับ (strong obligation)"},
+  {cat:"Unit 6 – Grammar",q:"'mustn't' ต่างจาก 'don't have to' อย่างไร?",opts:["ทั้งคู่หมายถึงห้ามทำ","mustn't = ห้ามทำ / don't have to = ไม่จำเป็นต้องทำ","ทั้งคู่หมายถึงไม่จำเป็น","ไม่มีความแตกต่าง"],ans:1,exp:"mustn't = ห้ามเด็ดขาด (prohibition) / don't have to = ไม่จำเป็น (no obligation)"},
+  {cat:"Unit 6 – Grammar",q:"ประโยคใดถูกต้อง?",opts:["You mustn't to wear a hard hat.","You must wearing a hard hat.","You must wear a hard hat.","You must to wear a hard hat."],ans:2,exp:"must + base verb (ไม่มี 'to')"},
+  {cat:"Unit 6 – Grammar",q:"'You ___ take any photographs.' (ห้ามเด็ดขาด)",opts:["don't have to","shouldn't","mustn't","needn't"],ans:2,exp:"mustn't = ห้ามเด็ดขาด"},
+  {cat:"Unit 6 – Grammar",q:"'You ___ wear goggles.' (ไม่จำเป็นต้องใส่)",opts:["mustn't","don't have to","must","should"],ans:1,exp:"don't have to = ไม่จำเป็น (no obligation)"},
+  {cat:"Unit 6 – Grammar",q:"Exercise 2: 'Everyone ___ sign in at reception.'",opts:["must","needs","need to","mustn't"],ans:0,exp:"must sign in (ไม่ใช่ 'needs sign')"},
+  {cat:"Unit 6 – Grammar",q:"'When I visited last week, I ___ wear goggles like last time.' (อดีต-ไม่จำเป็น)",opts:["didn't have to","mustn't","don't have to","haven't had to"],ans:0,exp:"didn't have to = อดีต ไม่จำเป็น"},
+  {cat:"Unit 6 – Instructions",q:"'___ of all moving machinery.' เติมคำที่ถูก",opts:["Watch out","Beware","Be careful","Don't beware"],ans:1,exp:"Beware of = ระวัง (สิ่งอันตราย)"},
+  {cat:"Unit 6 – Instructions",q:"'___ sure you are wearing your ID badge at all times.'",opts:["Do","Be","Make","You must"],ans:2,exp:"Make sure = ตรวจสอบให้แน่ใจ"},
+  {cat:"Unit 6 – Instructions",q:"'___ out for overhead cables!' เติมคำที่ถูก",opts:["Watch","Make","Be","Look"],ans:0,exp:"Watch out for = ระวัง!"},
+  {cat:"Unit 6 – Instructions",q:"'Be careful ___ slippery floors.' เติมคำ",opts:["for","about","of","with"],ans:2,exp:"Be careful of = ระวัง..."},
+  {cat:"Unit 6 – Instructions",q:"'You are ___ to take anything out of the factory.' เติมคำ",opts:["forget","not allowed","must not","don't"],ans:1,exp:"You are not allowed to = ไม่ได้รับอนุญาต"},
+  {cat:"Unit 6 – Linking Words",q:"'___ the alarm sounds, leave immediately.' เติมคำ linking time",opts:["Until","During","When","Before"],ans:2,exp:"When = เมื่อ"},
+  {cat:"Unit 6 – Linking Words",q:"'Wait ___ the machine stops.' เติมคำ",opts:["as soon as","until","before","while"],ans:1,exp:"until = จนกว่า"},
+  {cat:"Unit 6 – Linking Words",q:"'Don't use phone ___ operating machinery.' เติมคำ",opts:["before","after","while","until"],ans:2,exp:"while = ขณะที่"},
+  {cat:"Unit 6 – Linking Words",q:"'Leave ___ the alarm rings.' (ทันทีที่)",opts:["when","as soon as","while","until"],ans:1,exp:"as soon as = ทันทีที่"},
+  {cat:"Unit 7 – Vocabulary",q:"'premium service' หมายถึงอะไร?",opts:["บริการฟรี","บริการพื้นฐาน","บริการระดับพรีเมียม","บริการออนไลน์"],ans:2,exp:"premium service = บริการระดับพรีเมียม"},
+  {cat:"Unit 7 – Vocabulary",q:"'no frills flight' คืออะไร?",opts:["เที่ยวบิน VIP","เที่ยวบินราคาประหยัด ไม่มีของแถม","เที่ยวบินชั้นธุรกิจ","เที่ยวบินพิเศษ"],ans:1,exp:"no frills flight = เที่ยวบินราคาประหยัด ไม่มีของแถม"},
+  {cat:"Unit 7 – Word Forms",q:"Verb form ของ 'apology' คืออะไร?",opts:["apologic","apologise","apology","apologetic"],ans:1,exp:"apology (noun) → apologise (verb) → apologetic (adjective)"},
+  {cat:"Unit 7 – Word Forms",q:"Adjective form ของ 'confidence' คืออะไร?",opts:["confide","confident","confidently","confiding"],ans:1,exp:"confidence (noun) → confident (adjective)"},
+  {cat:"Unit 7 – Word Forms",q:"'satisfaction' มี verb form ว่าอะไร?",opts:["satisfying","satisfied","satisfy","satisfaction"],ans:2,exp:"satisfy (verb) → satisfied/satisfying (adjective) → satisfaction (noun)"},
+  {cat:"Unit 7 – Word Forms",q:"คำว่า 'empathy' มี adjective form ว่าอะไร?",opts:["empathise","empathical","empathetic","emphatic"],ans:2,exp:"empathy → empathise (verb) → empathetic (adjective)"},
+  {cat:"Cover Letter",q:"ในโครงสร้าง Cover Letter 'Inside Address' คืออะไร?",opts:["ที่อยู่ของเรา","ชื่อ-ตำแหน่ง-บริษัทของผู้รับ","คำขึ้นต้น","วันที่เขียน"],ans:1,exp:"Inside Address = ชื่อ-ตำแหน่ง-บริษัทของผู้รับ"},
+  {cat:"Cover Letter",q:"ถ้ารู้ชื่อและเพศผู้รับ ต้องใช้ Complimentary Close ว่าอะไร?",opts:["Yours faithfully,","Best regards,","Yours sincerely,","Kind regards,"],ans:2,exp:"รู้ชื่อ → Dear Ms./Mr. → Yours sincerely,"},
+  {cat:"Cover Letter",q:"ถ้าใช้ 'Dear Sir or Madam' ต้องลงท้ายด้วยอะไร?",opts:["Yours sincerely,","Yours faithfully,","Best wishes,","Kind regards,"],ans:1,exp:"Dear Sir or Madam → Yours faithfully, (เท่านั้น)"},
+  {cat:"Cover Letter",q:"Preposition ใดใช้กับวันที่? เช่น 'advertised ___ 20 April'",opts:["in","at","on","for"],ans:2,exp:"วันที่ใช้ on: advertised on 20 April"},
+  {cat:"Cover Letter",q:"Preposition ใดใช้กับตำแหน่งงาน? เช่น 'apply ___ the post of...'",opts:["in","at","on","for"],ans:3,exp:"for ตำแหน่ง: apply for the post of..."},
+  {cat:"Cover Letter",q:"Preposition ใดใช้กับหนังสือพิมพ์? เช่น 'advertised ___ the Bangkok Post'",opts:["on","at","in","for"],ans:2,exp:"in หนังสือพิมพ์: in the Bangkok Post"},
+  {cat:"Cover Letter",q:"ประโยค Closing ใดถูกต้อง?",opts:["I look forward to hear from you.","I look forward to hearing from you.","I look forward hear from you.","I look forward to heard from you."],ans:1,exp:"look forward to + V-ing เท่านั้น: look forward to hearing"},
+  {cat:"Cover Letter",q:"ข้อใดเป็นข้อผิดพลาดที่พบบ่อย?",opts:["Yours sincerely,","Dear Ms. Johnson,","in your website","on 30 March"],ans:2,exp:"ต้องใช้ 'on your website' ไม่ใช่ 'in your website'"},
+  {cat:"Cover Letter",q:"ทักษะใดเหมาะสมสำหรับตำแหน่ง Administrative Assistant?",opts:["Won cooking competition","Proficient in Microsoft Office","Skilled in gaming","Won surfing contest"],ans:1,exp:"Proficient in Microsoft Office เป็นทักษะที่เกี่ยวข้องโดยตรง"},
+  {cat:"Cover Letter",q:"'Enclosure' ในจดหมายหมายถึงอะไร?",opts:["ลายเซ็น","วันที่เขียน","เอกสารที่แนบมาด้วย","ชื่อบริษัท"],ans:2,exp:"Enclosure = เอกสารที่แนบมาด้วย เช่น résumé, transcript"},
+  {cat:"Cover Letter",q:"ข้อใดถูกต้อง?",opts:["Dear Sirs or Madams:","Dear Sir or Madam,","Dear Sir or Madam:","Dear Sirs or Madam,"],ans:1,exp:"Dear Sir or Madam, (ไม่มี s / ใช้ comma ไม่ใช่ colon)"},
+  {cat:"Reading – Data",q:"Main idea ของบทความ 'Data in the Digital World' คืออะไร?",opts:["วิธีทำโฆษณาออนไลน์","ความเสี่ยงด้าน privacy จากการใช้อินเทอร์เน็ต","ประวัติของอินเทอร์เน็ต","ราคาของ digital marketing"],ans:1,exp:"บทความพูดถึงความเป็นส่วนตัว (privacy) และวิธีปกป้องข้อมูลในยุคดิจิทัล"},
+  {cat:"Reading – Data",q:"'Digital footprint' หมายถึงอะไร?",opts:["รอยเท้าดิจิทัลในเกม","ร่องรอยทุกอย่างที่เราทำออนไลน์","แอปบันทึกการเดิน","ข้อมูลทางการแพทย์"],ans:1,exp:"Digital footprint = ร่องรอยข้อมูลดิจิทัลที่เราทิ้งไว้จากทุก search, click, purchase"},
+  {cat:"Reading – Data",q:"ในอดีต ข้อมูลส่วนตัวส่วนใหญ่อยู่ในรูปแบบใด?",opts:["ดิจิทัล","physical form (กระดาษ, แฟ้ม)","cloud storage","social media"],ans:1,exp:"In the past, information existed mostly in physical form: on paper, in a folder"},
+  {cat:"Reading – Data",q:"EU ออกกฎหมายใดเพื่อปกป้องข้อมูล?",opts:["Digital Security Act","General Data Protection Law","Internet Privacy Bill","EU Data Shield"],ans:1,exp:"EU passed the General Data Protection Law ควบคุมการเก็บข้อมูลออนไลน์"},
+  {cat:"Reading – Data",q:"'data breach' หมายความว่าอะไร?",opts:["การเข้ารหัสข้อมูล","การรั่วไหลของข้อมูล","การสำรองข้อมูล","การลบข้อมูล"],ans:1,exp:"data breach = การรั่วไหลของข้อมูล (ข้อมูลสูญหาย/ถูก share โดยไม่ยินยอม)"},
+  {cat:"Reading – Data",q:"'the price we have to pay' ในบทความหมายถึงอะไร?",opts:["ค่าบริการอินเทอร์เน็ต","การยอมแลกข้อมูลส่วนตัวเพื่อใช้บริการออนไลน์ฟรี","ค่าโฆษณาดิจิทัล","ค่าปรับทางกฎหมาย"],ans:1,exp:"'price to pay' = การยอมแลกข้อมูลส่วนตัวเพื่อใช้บริการออนไลน์ฟรี"},
+  {cat:"Reading – Data",q:"บริษัทได้ประโยชน์จาก digital footprint ของเราอย่างไร?",opts:["เพื่อช่วยเราค้นหาข้อมูล","ขายโฆษณา targeted content และทำเงิน","เพื่อปกป้องความปลอดภัย","เพื่อพัฒนาระบบอินเทอร์เน็ต"],ans:1,exp:"Companies use footprint to sell targeted content and make profit from digital marketing"},
+  {cat:"Reading – Data",q:"'consent' ในบทความหมายถึงอะไร?",opts:["การปฏิเสธ","การยินยอม","การร้องเรียน","การบังคับ"],ans:1,exp:"consent = การยินยอม (เราโพสต์ข้อมูลเองบน social media = share with our consent)"}
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+let results = [];
+let catScores = {};
+
+function initQuiz() {
+  current = 0; score = 0; answered = false; results = []; catScores = {};
+  document.getElementById('result-card').style.display = 'none';
+  document.getElementById('question-card').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = questions[current];
+  answered = false;
+  document.getElementById('q-counter').textContent = 'ข้อที่ ' + (current+1) + ' / ' + questions.length;
+  document.getElementById('score-badge').textContent = 'คะแนน: ' + score;
+  document.getElementById('progress-bar').style.width = ((current / questions.length) * 100) + '%';
+  document.getElementById('category-badge').textContent = q.cat;
+  document.getElementById('question-text').textContent = (current+1) + '. ' + q.q;
+  const opts = document.getElementById('options');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = String.fromCharCode(65+i) + '. ' + o;
+    btn.onclick = () => selectAnswer(i);
+    opts.appendChild(btn);
+  });
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'none';
+  fb.className = 'feedback-box';
+  document.getElementById('next-btn').style.display = 'none';
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  const q = questions[current];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  const correct = idx === q.ans;
+  if (correct) { score++; results.push(1); } else { results.push(0); }
+  btns[q.ans].classList.add('correct');
+  if (!correct) btns[idx].classList.add('wrong');
+  const fb = document.getElementById('feedback-box');
+  fb.style.display = 'block';
+  if (correct) {
+    fb.className = 'feedback-box correct-fb';
+    fb.textContent = '✓ ถูกต้อง! ' + q.exp;
+  } else {
+    fb.className = 'feedback-box wrong-fb';
+    fb.textContent = '✗ ผิด — เฉลย: ' + q.opts[q.ans] + ' | ' + q.exp;
+  }
+  if (!catScores[q.cat]) catScores[q.cat] = {c:0,t:0};
+  catScores[q.cat].t++;
+  if (correct) catScores[q.cat].c++;
+  document.getElementById('next-btn').style.display = 'inline-block';
+  document.getElementById('next-btn').textContent = current < questions.length-1 ? 'ถัดไป →' : 'ดูผลคะแนน';
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) { showResult(); return; }
+  showQuestion();
+}
+
+function showResult() {
+  document.getElementById('question-card').style.display = 'none';
+  document.getElementById('result-card').style.display = 'block';
+  document.getElementById('score-big').textContent = score + ' / ' + questions.length;
+  const pct = Math.round((score / questions.length) * 100);
+  document.getElementById('score-pct').textContent = 'คิดเป็น ' + pct + '%';
+  let msg = pct >= 80 ? 'ยอดเยี่ยม! เก่งมากๆ' : pct >= 60 ? 'ผ่านได้ ลองทบทวนเพิ่มเติมนิดหน่อย' : 'ยังต้องศึกษาเพิ่มเติม ลองทำใหม่อีกครั้ง';
+  document.getElementById('result-msg').textContent = msg;
+  const dots = document.getElementById('grade-dots');
+  dots.innerHTML = '';
+  results.forEach(r => {
+    const d = document.createElement('div');
+    d.className = 'grade-dot ' + (r ? 'dot-correct' : 'dot-wrong');
+    dots.appendChild(d);
+  });
+  const bk = document.getElementById('breakdown');
+  bk.innerHTML = '<h4>คะแนนแยกตามหัวข้อ</h4>';
+  Object.entries(catScores).forEach(([cat, v]) => {
+    const row = document.createElement('div');
+    row.className = 'bk-row';
+    const p = Math.round((v.c/v.t)*100);
+    row.innerHTML = '<span>' + cat + '</span><span>' + v.c + '/' + v.t + ' (' + p + '%)</span>';
+    bk.appendChild(row);
+  });
+  document.getElementById('progress-bar').style.width = '100%';
+}
+
+function restartQuiz() { initQuiz(); }
+
+initQuiz();
+</script>
